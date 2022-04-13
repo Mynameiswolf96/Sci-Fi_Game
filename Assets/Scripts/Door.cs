@@ -11,7 +11,7 @@ public class Door : MonoBehaviour
     {
         if (other.tag == Player)
         {
-             
+            obj.GetComponent<Animator>().SetTrigger(NameTrigger);
         }
 
     }

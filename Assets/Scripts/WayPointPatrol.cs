@@ -2,8 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-namespace Shoot
-{
+
     public class WayPointPatrol : MonoBehaviour
     {
         private NavMeshAgent agent;
@@ -19,4 +18,4 @@ namespace Shoot
         }
     }
 
-}
+

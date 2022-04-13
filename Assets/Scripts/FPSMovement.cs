@@ -1,93 +1,64 @@
 using UnityEngine;
 
-//эта строчка гарантирует что наш скрипт не завалится 
-//ести на плеере будет отсутствовать компонент Rigidbody
-[RequireComponent(typeof(Rigidbody))]
-public class FPSMovement : MonoBehaviour
 
-
-{
-    [SerializeField] private float speed = 5f;
-    [SerializeField] private float runspeed = 10f;
-    [SerializeField] private float jumpForce = 10f;
-
-    private string horizontal = "Horizontal";
-    private string vertical = "Vertical";
-    private string run = "Run";
-    private string isMove = "isMove";
-    private string Jump = "Jump";
-    private bool isRunning;
-    private bool _isGrounded;
-
-    private Vector3 direction;
-
-    private Animator anim;
-
-    float deltaX, deltaZ;
-
-    private Rigidbody rb;
-
-    private void Awake()
+    [RequireComponent(typeof(Rigidbody))]
+    public class FPSMovement : MonoBehaviour
     {
-        rb = GetComponent<Rigidbody>();
-        anim = GetComponent<Animator>();
-    }
+        [SerializeField] private float speed = 5f;
+        [SerializeField] private float runspeed = 10f;
+        [SerializeField] private float gravity = -9.8f;
+        [SerializeField] private float jumpForce = 5f;
 
-    void Update()
-    {
+        private string horizontal = "Horizontal";
+        private string vertical = "Vertical";
+        private string run = "Run";
+        private string isMove = "isMove";
 
+        private Vector3 direction;
+        private bool isRunning;
 
-        MovmentLogic();
-        JumpLogic();
+        private Animator anim;
 
+        float deltaX, deltaZ;
+        private CharacterController _characterController;
 
-    }
+        private Rigidbody rb;
 
-    private void MovmentLogic()
-    {
-        deltaX = Input.GetAxis(horizontal) * (isRunning ? runspeed : speed);
-        deltaZ = Input.GetAxis(vertical) * (isRunning ? runspeed : speed);
-        direction = new Vector3(deltaX, 0, deltaZ);
-        rb.AddForce(direction);
-
-    }
-    private void JumpLogic()
-    {
-        if (_isGrounded)
+        private void Awake()
         {
-            if (Input.GetAxis(Jump) > 0)
+            rb = GetComponent<Rigidbody>();
+        }
+        private void Start()
+        {
+            anim = GetComponent<Animator>();
+            _characterController = GetComponent<CharacterController>();
+        }
+        void Update()
+        {
+
+            deltaX = Input.GetAxis(horizontal) * (isRunning ? runspeed : speed);
+            deltaZ = Input.GetAxis(vertical) * (isRunning ? runspeed : speed);
+
+            direction = new Vector3(deltaX, 0, deltaZ);
+            direction = Vector3.ClampMagnitude(direction, (isRunning ? runspeed : speed));
+            direction.y = gravity;
+            direction *= Time.deltaTime;
+            direction = transform.TransformDirection(direction);
+            _characterController.Move(direction);
+
+        }
+
+        private void FixedUpdate()
+        {
+
+            if (Input.GetButton(vertical) || Input.GetButton(horizontal))
             {
-                rb.AddForce(Vector3.up * jumpForce);
+                anim.SetBool(isMove, true);
             }
+            else
+            {
+                anim.SetBool(isMove, false);
+            }
+            isRunning = Input.GetButton(run);
         }
     }
-    void OnCollisionEnter(Collision collision)
-    {
-        IsGroundedUpate(collision, true);
-    }
-
-    void OnCollisionExit(Collision collision)
-    {
-        IsGroundedUpate(collision, false);
-    }
-    private void IsGroundedUpate(Collision collision, bool value)
-    {
-        if (collision.gameObject.tag == ("Ground"))
-        {
-            _isGrounded = value;
-        }
-    }
-    private void FixedUpdate()
-    {
-
-        if (Input.GetButton(vertical) || Input.GetButton(horizontal))
-        {
-            anim.SetBool(isMove, true);
-        }
-        else
-        {
-            anim.SetBool(isMove, false);
-        }
-        isRunning = Input.GetButton(run);
-    }
-}
