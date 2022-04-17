@@ -8,8 +8,9 @@ using UnityEngine;
         [SerializeField] private float runspeed = 10f;
         [SerializeField] private float gravity = -9.8f;
         [SerializeField] private float jumpForce = 5f;
+        [SerializeField] private GameObject gamePause;
 
-        private string horizontal = "Horizontal";
+    private string horizontal = "Horizontal";
         private string vertical = "Vertical";
         private string run = "Run";
         private string isMove = "isMove";
@@ -45,6 +46,12 @@ using UnityEngine;
             direction *= Time.deltaTime;
             direction = transform.TransformDirection(direction);
             _characterController.Move(direction);
+
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            gamePause.SetActive(true);
+            Time.timeScale = 0;
+        }
 
         }
 

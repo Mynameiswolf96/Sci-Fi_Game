@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.UI;
 public class Health : MonoBehaviour
 {
     [SerializeField] private float maxHealth=10f;
     private float curHealth;
+    public Slider slider;
     private void Awake()
     {
         curHealth = maxHealth;
@@ -21,5 +22,9 @@ public class Health : MonoBehaviour
     private void Die()
     {
         gameObject.SetActive(false); 
+    }
+    private void Update()
+    {
+        slider.value = curHealth;
     }
 }
