@@ -2,6 +2,7 @@ using UnityEngine;
 
 
     [RequireComponent(typeof(Rigidbody))]
+    [RequireComponent(typeof(AudioSource))]
     public class FPSMovement : MonoBehaviour
     {
         [SerializeField] private float speed = 5f;
@@ -9,8 +10,11 @@ using UnityEngine;
         [SerializeField] private float gravity = -9.8f;
         [SerializeField] private float jumpForce = 5f;
         [SerializeField] private GameObject gamePause;
+        [SerializeField] private float walkPitch = .75f;
+        [SerializeField] private float runPitch = 1.25f;
+        private new AudioSource audio;
 
-    private string horizontal = "Horizontal";
+        private string horizontal = "Horizontal";
         private string vertical = "Vertical";
         private string run = "Run";
         private string isMove = "isMove";
@@ -27,6 +31,7 @@ using UnityEngine;
 
         private void Awake()
         {
+        audio = GetComponent<AudioSource>();
             rb = GetComponent<Rigidbody>();
         }
         private void Start()
@@ -58,14 +63,17 @@ using UnityEngine;
         private void FixedUpdate()
         {
 
-            if (Input.GetButton(vertical) || Input.GetButton(horizontal))
+            if (Input.GetButton(vertical) || Input.GetButton(horizontal) )
             {
                 anim.SetBool(isMove, true);
+            
             }
             else
             {
-                anim.SetBool(isMove, false);
-            }
+            anim.SetBool(isMove, false);
+            audio.Play();
+
+        }
             isRunning = Input.GetButton(run);
         }
     }
